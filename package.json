@@ -1,0 +1,37 @@
+{
+  "name": "oc-tools",
+  "version": "1.0.3",
+  "description": "A collection of utils functions",
+  "main": "index.js",
+  "scripts": {
+    "pack": "node cli.js pack",
+    "patch": "node cli.js patch",
+    "link": "node cli.js link",
+    "unlink": "node cli.js unlink"
+  },
+  "author": "Ori Calvo",
+  "license": "MIT",
+  "dependencies": {
+    "chokidar": "^2.0.4",
+    "deep-assign": "^2.0.0",
+    "follow-redirects": "^1.2.3",
+    "fs-extra": "^5.0.0",
+    "glob": "^7.1.1",
+    "minimatch": "^3.0.4",
+    "open": "^0.0.5",
+    "request": "^2.81.0",
+    "string-argv": "^0.0.2"
+  },
+  "devDependencies": {
+    "@types/node": "^10.7.1",
+    "typescript": "^2.1.5"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/oricalvo/oc-tools.git"
+  },
+  "bin": {
+    "bu": "bin/bu.js",
+    "cli": "bin/cli.js"
+  }
+}
