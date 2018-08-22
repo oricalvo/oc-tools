@@ -102,6 +102,31 @@ export function parseCliArgs(): CliArgs {
     return args;
 }
 
+export function parseArgs() {
+    const args = {};
+
+    const argv = process.argv;
+    let i=0;
+
+    for(i=2; i<argv.length; i++) {
+        const arg = argv[i];
+
+        if(arg.startsWith("--")) {
+            const optionName = arg.substring(2);
+            let optionValue = undefined;
+
+            if(argv[i+1] && !argv[i+1].startsWith("-")) {
+                optionValue = argv[i+1];
+                i++;
+            }
+
+            args[optionName] = optionValue;
+        }
+    }
+
+    return args;
+}
+
 export interface DelegateOptions {
     tsconfig: string;
     main: string;
@@ -138,7 +163,7 @@ export async function bootstrap(options: DelegateOptions) {
             throw new Error("Exported function " + command + " was not found");
         }
 
-        await func();
+        await func(parseArgs());
     }
     catch(err) {
         console.error(err);
