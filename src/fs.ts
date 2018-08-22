@@ -14,8 +14,8 @@ const mkdir = promisify(fsExtra.mkdir);
 const ensureDir = promisify(fsExtra.ensureDir);
 const remove = promisify(fsExtra.remove);
 const copy = promisify(fsExtra.copy);
-const readFile = promisify(fs.readFile);
-const writeFile = promisify(fs.writeFile);
+export const readFile = promisify(fs.readFile);
+export const writeFile = promisify(fs.writeFile);
 const appendFile = promisify(fsExtra.appendFile);
 
 export async function directoryExists(path) {
