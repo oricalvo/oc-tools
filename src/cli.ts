@@ -131,6 +131,7 @@ export interface DelegateOptions {
     tsconfig: string;
     main: string;
     log: boolean;
+    useTsConfigBuild: boolean;
 }
 
 export async function bootstrap(options: DelegateOptions) {
@@ -148,7 +149,7 @@ export async function bootstrap(options: DelegateOptions) {
         logger.log("cli " + process.argv.slice(2).join(""));
 
         logger.log("Compiling build scripts");
-        await spawn("node_modules/.bin/tsc", ["-p", options.tsconfig], {
+        await spawn("node_modules/.bin/tsc", [options.useTsConfigBuild ? "-b" : "-p", options.tsconfig], {
             shell: true
         });
 
