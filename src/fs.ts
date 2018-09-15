@@ -9,7 +9,8 @@ import {LimitConcurrency} from "./tasks";
 import * as chokidar from "chokidar";
 import {promisify} from "util";
 
-const stat = promisify(fs.stat);
+export type StatFunction = (path: string)=>Promise<Stats>;
+export const stat: StatFunction = promisify(fs.stat);
 const mkdir = promisify(fsExtra.mkdir);
 const ensureDir = promisify(fsExtra.ensureDir);
 const remove = promisify(fsExtra.remove);
@@ -117,7 +118,7 @@ export function deleteGlob(pattern) {
     });
 }
 
-export function copyFile(from, to, ignoreDir = false): Promise<void> {
+export function copyFile(from, to, ignoreDir = false, verbose: boolean = false): Promise<void> {
     return Promise.resolve().then(()=> {
         return stat(from).then(stat => {
             if (stat.isDirectory()) {
@@ -126,6 +127,10 @@ export function copyFile(from, to, ignoreDir = false): Promise<void> {
                 }
             }
             else {
+                if(verbose) {
+                    console.log("Copying file " + from + " to " + to);
+                }
+
                 return copy(from, to);
             }
         });
@@ -335,3 +340,55 @@ export function waitForFileCreation(folder: string, relativeFilePath: string, cr
             });
     });
 }
+
+function getFilesByGlob(pattern): Promise<string[]> {
+    return new Promise((resolve, reject) => {
+        glob(pattern, {}, function (err, files) {
+            if(err) {
+                reject(err);
+                return;
+            }
+
+            resolve(files);
+        });
+    });
+}
+
+async function getDirectoryModifiedDate(dirPath: string, calcMaxDate: boolean) {
+    let minMax = null;
+
+    const files = await getFilesByGlob(dirPath + "/**/*");
+    for(const file of files) {
+        const filePath = path.resolve(dirPath, file);
+
+        const info = await stat(filePath);
+
+        if(minMax == null) {
+            minMax = info.mtime;
+        }
+        else {
+            if(calcMaxDate) {
+                if(info.mtime > minMax) {
+                    minMax = info.mtime;
+                }
+            }
+            else {
+                if(info.mtime < minMax) {
+                    minMax = info.mtime;
+                }
+            }
+        }
+    }
+
+    return minMax;
+}
+
+function getDirectoryMaxModifiedDate(dirPath: string) {
+    return getDirectoryModifiedDate(dirPath, true);
+}
+
+function getDirectoryMinModifiedDate(dirPath: string) {
+    return getDirectoryModifiedDate(dirPath, false);
+}
+
+
