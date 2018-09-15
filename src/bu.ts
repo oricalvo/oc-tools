@@ -1,6 +1,6 @@
-import {enableLogging, logger} from "./logger";
 import {readJSONFile, replaceExt} from "./fs";
 import {parseCliArgs} from "./cli";
+import {createLogger} from "./logger";
 const fs = require("fs");
 const path = require("path");
 const {isFile} = require("./fs");
@@ -9,19 +9,17 @@ const cwd = process.cwd();
 
 run();
 
+const logger = createLogger("bu");
+
 async function run() {
     const args = parseCliArgs();
-
-    // if(args.options.hasOwnProperty("log")) {
-        enableLogging();
-    // }
 
     const mainTs = path.join(cwd, "build/main.ts");
     let foundTsConfig: string = null;
     let foundMainJs: string = null;
 
     if (await isFile(mainTs)) {
-        logger.log("Found build/main.ts at " + mainTs);
+        logger.debug("Found build/main.ts at " + mainTs);
 
         const tsConfigs = [
             path.join(cwd, "build/tsconfig.json"),
@@ -31,15 +29,15 @@ async function run() {
         for(let tsConfig of tsConfigs) {
             if (await isFile(tsConfig)) {
                 foundTsConfig = tsConfig;
-                logger.log("Compiling tsconfig.json at " + tsConfig);
+                logger.debug("Compiling tsconfig.json at " + tsConfig);
                 await exec(`node_modules/.bin/tsc -p "${tsConfig}"`);
                 const config = await readJSONFile(tsConfig);
                 if(config.compilerOptions.outDir) {
-                    logger.log("tsc outDir is " + config.compilerOptions.outDir);
+                    logger.debug("tsc outDir is " + config.compilerOptions.outDir);
                     foundMainJs = path.join(tsConfig, "..", config.compilerOptions.outDir, "main.js");
                 }
                 else {
-                    logger.log("Not tsc outDir was found");
+                    logger.debug("Not tsc outDir was found");
                     foundMainJs = replaceExt(mainTs, "js");
                 }
                 break;
@@ -47,7 +45,7 @@ async function run() {
         }
 
         if(!foundTsConfig) {
-            logger.log("Compiling main.ts at " + mainTs);
+            logger.debug("Compiling main.ts at " + mainTs);
             await exec(`node_modules/.bin/tsc ${mainTs}`);
             foundMainJs = path.join(cwd, "build/main.js");
         }
@@ -63,6 +61,6 @@ async function run() {
         return;
     }
 
-    logger.log("Loading " + foundMainJs);
+    logger.debug("Loading " + foundMainJs);
     require(foundMainJs);
 }

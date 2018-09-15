@@ -1,6 +1,6 @@
 {
   "name": "oc-tools",
-  "version": "1.0.19",
+  "version": "1.0.20",
   "description": "A collection of utils functions",
   "main": "index.js",
   "scripts": {
@@ -18,9 +18,11 @@
     "fs-extra": "^5.0.0",
     "glob": "^7.1.1",
     "minimatch": "^3.0.4",
+    "moment": "^2.22.2",
     "open": "^0.0.5",
     "request": "^2.81.0",
-    "string-argv": "^0.0.2"
+    "string-argv": "^0.0.2",
+    "winston": "^3.1.0"
   },
   "devDependencies": {
     "@types/node": "^10.7.1",

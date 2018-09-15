@@ -1,9 +1,13 @@
 import {copyFile, copyGlob, deleteDirectory} from "../src/fs";
 import {spawn} from "../src/process";
-import {logger} from "../src/logger";
+import {createAppLogger, LOGGER} from "../src/logger";
+import {registerService} from "../src/serviceLocator";
+
+const logger = createAppLogger("build", "build.log");
+registerService(LOGGER, logger);
 
 export async function pack() {
-    logger.log("Creating npm package");
+    logger.debug("Creating npm package");
 
     await deleteDirectory("./src_out");
     await deleteDirectory("./package");

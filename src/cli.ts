@@ -1,6 +1,8 @@
-import {enableLogging, logger} from "./logger";
 import {spawn} from "./process";
 import * as path from "path";
+import {createLogger} from "./logger";
+
+const logger = createLogger("cli");
 
 const commands = {};
 
@@ -30,12 +32,12 @@ export async function run() {
         }
 
         const before = new Date();
-        logger.log("Running command \"" + args.command + "\"");
+        logger.debug("Running command \"" + args.command + "\"");
 
         await command.action(args.commandOptions);
 
         const after = new Date();
-        logger.log("Command \"" + args.command + "\" completed within " + (after.valueOf() - before.valueOf()) / 1000 + " secs");
+        logger.debug("Command \"" + args.command + "\" completed within " + (after.valueOf() - before.valueOf()) / 1000 + " secs");
     }
     catch(err) {
         logger.error(err.message);
@@ -136,19 +138,15 @@ export interface DelegateOptions {
 
 export async function bootstrap(options: DelegateOptions) {
     try {
-        if(options.log) {
-            enableLogging();
-        }
-
         const cwd = process.cwd();
-        logger.log(cwd);
+        logger.debug(cwd);
         options = options || <any>{};
         options.main = path.resolve(cwd, options.main || "./build_out/main.js");
         options.tsconfig = path.resolve(cwd, options.tsconfig || "./build/tsconfig.json");
 
-        logger.log("cli " + process.argv.slice(2).join(""));
+        logger.debug("cli " + process.argv.slice(2).join(""));
 
-        logger.log("Compiling build scripts");
+        logger.debug("Compiling build scripts");
         await spawn("node_modules/.bin/tsc", [options.useTsConfigBuild ? "-b" : "-p", options.tsconfig], {
             shell: true
         });

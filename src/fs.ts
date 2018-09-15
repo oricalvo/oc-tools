@@ -8,6 +8,7 @@ import {promisifyNodeFn1} from "./promise";
 import {LimitConcurrency} from "./tasks";
 import * as chokidar from "chokidar";
 import {promisify} from "util";
+import {createLogger} from "./logger";
 
 export type StatFunction = (path: string)=>Promise<Stats>;
 export const stat: StatFunction = promisify(fs.stat);
@@ -18,6 +19,8 @@ const copy = promisify(fsExtra.copy);
 export const readFile = promisify(fs.readFile);
 export const writeFile = promisify(fs.writeFile);
 const appendFile = promisify(fsExtra.appendFile);
+
+const logger = createLogger("fs");
 
 export async function directoryExists(path) {
     try {
@@ -33,7 +36,7 @@ export async function directoryExists(path) {
     }
 }
 
-export async function fileExists(path) {
+export async function fileExists(path): Promise<boolean> {
     try {
         const info = await stat(path);
         return info.isFile();
@@ -47,7 +50,7 @@ export async function fileExists(path) {
     }
 }
 
-export async function deleteDirectory(path) {
+export async function deleteDirectory(path): Promise<void> {
     try {
         const isDir = await directoryExists(path);
         if (!isDir) {
@@ -128,7 +131,7 @@ export function copyFile(from, to, ignoreDir = false, verbose: boolean = false):
             }
             else {
                 if(verbose) {
-                    console.log("Copying file " + from + " to " + to);
+                    logger.debug("Copying file " + from + " to " + to);
                 }
 
                 return copy(from, to);
@@ -284,10 +287,12 @@ export function watchGlob(pattern, dest) {
     });
 }
 
-export async function copyAssets(assets: Asset[], watch: boolean): Promise<void> {
+export async function copyAssets(assets: Asset[], watch: boolean, verbose: boolean = false): Promise<void> {
+    console.log("verbose", verbose);
+
     await Promise.all(assets.map(a => {
         if(!getGlobBase(a.source)) {
-            return copyFile(a.source, a.target);
+            return copyFile(a.source, a.target,verbose);
         }
 
         return copyGlob(a.source, a.target);
