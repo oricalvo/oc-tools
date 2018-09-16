@@ -56,6 +56,9 @@ export class ModuleLogger {
     private get logger() {
         if(!this._logger) {
             this._logger = tryResolveService(LOGGER);
+            if(!this._logger) {
+                this._disabled = true;
+            }
         }
 
         return this._logger;
@@ -66,7 +69,7 @@ export class ModuleLogger {
     }
 
     debug(msg: string) {
-        if(this._disabled || !this._logger) {
+        if(this._disabled) {
             return;
         }
 
@@ -76,7 +79,7 @@ export class ModuleLogger {
     }
 
     warn(msg: string) {
-        if(this._disabled || !this._logger) {
+        if(this._disabled) {
             return;
         }
 
@@ -86,7 +89,7 @@ export class ModuleLogger {
     }
 
     error(msg: string, ...meta: any[]) {
-        if(this._disabled || !this._logger) {
+        if(this._disabled) {
             return;
         }
 
