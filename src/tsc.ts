@@ -91,12 +91,11 @@ export async function compileTscProject(options: CompileTscProjectOptions) {
             const source = sources[i];
             const out = outs[i];
             const sourceFiles = await searchGlob(source + "/**/*.d.ts");
-            console.log(sourceFiles);
             for (const sourceFile of sourceFiles) {
                 const sourceFullPath = path.resolve(sourceFile);
                 const sourceRelPath = sourceFullPath.substring(source.length + 1);
                 const outFullPath = path.resolve(out, sourceRelPath);
-                await copyFile(sourceFullPath, outFullPath, verbose);
+                await copyFile(sourceFullPath, outFullPath, false, verbose);
             }
         }
     }
