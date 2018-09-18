@@ -288,8 +288,6 @@ export function watchGlob(pattern, dest) {
 }
 
 export async function copyAssets(assets: Asset[], watch: boolean, verbose: boolean = false): Promise<void> {
-    console.log("verbose", verbose);
-
     await Promise.all(assets.map(a => {
         if(!getGlobBase(a.source)) {
             return copyFile(a.source, a.target,verbose);
