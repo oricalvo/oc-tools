@@ -6,6 +6,10 @@ export class ServiceToken<T> {
 const map = new Map<ServiceToken<any>, any>();
 
 export function registerService<T>(token: ServiceToken<T>, service: T) {
+    if(!token) {
+        throw new Error("Invalid token: " + token);
+    }
+
     map.set(token, service);
 }
 
