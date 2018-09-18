@@ -11,3 +11,4 @@ yarn*.*
 package
 /build_out
 /src_out
+/build.log

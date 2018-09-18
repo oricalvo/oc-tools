@@ -47,29 +47,30 @@ export function createAppLogger(appName: string, filePath: string): WinstonLogge
 }
 
 export class ModuleLogger {
-    private _logger: WinstonLogger;
-    private _disabled: boolean = false;
+    private logger: WinstonLogger;
+    private disabled: boolean = false;
 
     constructor(public name: string) {
     }
 
-    private get logger() {
-        if(!this._logger) {
-            this._logger = tryResolveService(LOGGER);
-            if(!this._logger) {
-                this._disabled = true;
+    private ensureInit() {
+        if(!this.logger) {
+            this.logger = tryResolveService(LOGGER);
+            if(!this.logger) {
+                this.disabled = true;
+                this.logger = <any>new NullLogger();
             }
         }
-
-        return this._logger;
     }
 
     disable() {
-        this._disabled = true;
+        this.disabled = true;
     }
 
     debug(msg: string) {
-        if(this._disabled) {
+        this.ensureInit();
+
+        if(this.disabled) {
             return;
         }
 
@@ -79,7 +80,9 @@ export class ModuleLogger {
     }
 
     warn(msg: string) {
-        if(this._disabled) {
+        this.ensureInit();
+
+        if(this.disabled) {
             return;
         }
 
@@ -89,7 +92,9 @@ export class ModuleLogger {
     }
 
     error(msg: string, ...meta: any[]) {
-        if(this._disabled) {
+        this.ensureInit();
+
+        if(this.disabled) {
             return;
         }
 
