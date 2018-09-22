@@ -31,7 +31,7 @@ class NullLogger implements Logger {
 export function createAppLogger(appName: string, filePath: string): WinstonLogger {
     const format = printf(info => {
         const prefix = `${appName}(${pid})${info.moduleName ? ":" + info.moduleName : ""}`;
-        return `${moment().format("HH:mm:ss:SSS")} ${prefix} ${info.level.toUpperCase()}: ${info.message}`;
+        return `${moment().format("HH:mm:ss:SSS")} ${prefix} ${info.level.toUpperCase()} ${info.message}`;
     });
 
     const logger = createWinstonLogger({
