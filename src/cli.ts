@@ -2,7 +2,7 @@ import {spawn} from "./process";
 import * as path from "path";
 import {createLogger} from "./logger";
 
-const logger = createLogger("cli");
+const logger = createLogger("oc-tools:cli");
 
 const commands = {};
 

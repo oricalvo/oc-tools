@@ -9,6 +9,7 @@ import {LimitConcurrency} from "./tasks";
 import * as chokidar from "chokidar";
 import {promisify} from "util";
 import {createLogger} from "./logger";
+import {split} from "./string";
 
 export type StatFunction = (path: string)=>Promise<Stats>;
 export const stat: StatFunction = promisify(fs.stat);
@@ -76,17 +77,21 @@ export function ensureDirectory(path) {
     return fsExtra.ensureDir(path);
 }
 
-function getGlobBase(pattern) {
+export function getGlobBase(pattern) {
     let base = "";
     let hasMagic = false;
-    const parts = pattern.split("/");
-    for(let part of parts) {
-        if(!glob.hasMagic(part)) {
-            if(base != "") {
-                base += "/";
+    let baseLength = 0;
+
+    const {tokens, seps} = split(pattern, "/\\");
+    for(let i=0; i<tokens.length; i++) {
+        const token = tokens[i];
+
+        if(!glob.hasMagic(token)) {
+            if(i > 0) {
+                base += seps[i];
             }
 
-            base += part;
+            base += token;
         }
         else {
             hasMagic = true;

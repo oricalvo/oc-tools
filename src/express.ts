@@ -27,18 +27,14 @@ function onError(res, err) {
 }
 
 export function promisifyExpressApi(func) {
-    return function(req, res) {
-        async function run(that, args): Promise<void> {
-            try {
-                const retVal = await func.apply(that, args);
-                res.send(retVal);
-            }
-            catch (err) {
-                onError(res, err);
-            }
+    return async function(req, res, next) {
+        try {
+            const retVal = await func.call(this, req, res, next);
+            res.send(retVal);
         }
-
-        return run(this, arguments);
+        catch (err) {
+            next(err);
+        }
     }
 }
 
