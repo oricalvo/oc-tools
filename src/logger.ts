@@ -17,7 +17,7 @@ export function createLogger(name: string): Logger {
     return new ModuleLogger(name);
 }
 
-class NullLogger implements Logger {
+export class NullLogger implements Logger {
     debug(...args) {
     }
 
