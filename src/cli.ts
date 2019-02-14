@@ -104,8 +104,16 @@ export function parseCliArgs(): CliArgs {
     return args;
 }
 
-export function parseArgs() {
-    const args = {};
+export interface Args {
+    cmd: string;
+    cmds: string[];
+}
+
+export function parseArgs(): Args {
+    const args: Args = {
+        cmd: undefined,
+        cmds: [],
+    };
 
     const argv = process.argv;
     let i=0;
@@ -124,6 +132,10 @@ export function parseArgs() {
 
             args[optionName] = optionValue;
         }
+        else {
+            args.cmd = arg;
+            args.cmds.push(arg);
+        }
     }
 
     return args;
@@ -139,14 +151,11 @@ export interface DelegateOptions {
 export async function bootstrap(options: DelegateOptions) {
     try {
         const cwd = process.cwd();
-        logger.debug(cwd);
         options = options || <any>{};
         options.main = path.resolve(cwd, options.main || "./build_out/main.js");
         options.tsconfig = path.resolve(cwd, options.tsconfig || "./build/tsconfig.json");
 
-        logger.debug("cli " + process.argv.slice(2).join(""));
-
-        logger.debug("Compiling build scripts");
+        console.log("Compiling build scripts");
         await spawn("node_modules/.bin/tsc", [options.useTsConfigBuild ? "-b" : "-p", options.tsconfig], {
             shell: true
         });
