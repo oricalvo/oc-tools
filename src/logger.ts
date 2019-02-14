@@ -39,7 +39,10 @@ export function createAppLogger(appName: string, filePath: string): WinstonLogge
         format: format,
         transports: [
             new transports.Console({}),
-            new transports.File({filename: filePath})
+            new transports.File({
+                filename: filePath,
+                maxsize: 25 * 1024 * 1024
+            })
         ],
     });
 
