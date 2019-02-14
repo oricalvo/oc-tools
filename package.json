@@ -1,6 +1,6 @@
 {
   "name": "oc-tools",
-  "version": "1.0.41",
+  "version": "1.0.44",
   "description": "A collection of utils functions",
   "main": "index.js",
   "scripts": {

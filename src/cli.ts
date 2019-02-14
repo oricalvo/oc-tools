@@ -109,16 +109,19 @@ export interface Args {
     cmds: string[];
 }
 
-export function parseArgs(): Args {
+export function parseArgs(argv?: string[]): Args {
+    if(!argv) {
+        argv = process.argv.slice(2);
+    }
+
     const args: Args = {
         cmd: undefined,
         cmds: [],
     };
 
-    const argv = process.argv;
-    let i=0;
+    let i;
 
-    for(i=2; i<argv.length; i++) {
+    for(i=0; i<argv.length; i++) {
         const arg = argv[i];
 
         if(arg.startsWith("--")) {
@@ -171,7 +174,7 @@ export async function bootstrap(options: DelegateOptions) {
             throw new Error("Exported function " + command + " was not found");
         }
 
-        await func(parseArgs());
+        await func(parseArgs(process.argv.slice(3)));
     }
     catch(err) {
         console.error(err);
