@@ -292,18 +292,38 @@ export function watchGlob(pattern, dest) {
     });
 }
 
-export async function copyAssets(assets: Asset[], watch: boolean, verbose: boolean = false): Promise<void> {
+export interface CopyServerAssetsOptions {
+    watch: boolean;
+    verbose?: boolean;
+    basePath?: string;
+}
+
+export async function copyAssets(assets: Asset[], overwriteOptions: CopyServerAssetsOptions): Promise<void> {
+    const options: CopyServerAssetsOptions = {
+        verbose: false,
+        basePath: process.cwd(),
+        watch: false,
+    };
+
+    Object.assign(options, overwriteOptions);
+
     await Promise.all(assets.map(a => {
-        if(!getGlobBase(a.source)) {
-            return copyFile(a.source, a.target,verbose);
+        const source = path.resolve(options.basePath, a.source);
+        const target = path.resolve(options.basePath, a.target);
+
+        if(!getGlobBase(source)) {
+            return copyFile(source, target, options.verbose);
         }
 
-        return copyGlob(a.source, a.target);
+        return copyGlob(source, target);
     }));
 
-    if(watch) {
+    if(options.watch) {
         Promise.all(assets.map(a => {
-            return watchGlob(a.source, a.target);
+            const source = path.resolve(options.basePath, a.source);
+            const target = path.resolve(options.basePath, a.target);
+
+            return watchGlob(source, target);
         }));
     }
 }
