@@ -149,7 +149,7 @@ export interface DelegateOptions {
     main: string;
     log: boolean;
     useTsConfigBuild: boolean;
-    tscFilePath: string;
+    tscFilePath?: string;
 }
 
 export async function bootstrap(options: DelegateOptions) {
