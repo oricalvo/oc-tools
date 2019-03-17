@@ -149,6 +149,7 @@ export interface DelegateOptions {
     main: string;
     log: boolean;
     useTsConfigBuild: boolean;
+    tscFilePath: string;
 }
 
 export async function bootstrap(options: DelegateOptions) {
@@ -157,9 +158,10 @@ export async function bootstrap(options: DelegateOptions) {
         options = options || <any>{};
         options.main = path.resolve(cwd, options.main || "./build_out/main.js");
         options.tsconfig = path.resolve(cwd, options.tsconfig || "./build/tsconfig.json");
+        const tscFilePath = options.tscFilePath || "node_modules/.bin/tsc";
 
         console.log("Compiling build scripts");
-        await spawn("node_modules/.bin/tsc", [options.useTsConfigBuild ? "-b" : "-p", options.tsconfig], {
+        await spawn(tscFilePath, [options.useTsConfigBuild ? "-b" : "-p", options.tsconfig], {
             shell: true
         });
 
