@@ -75,8 +75,8 @@ export function flattenQueryParams<T>(obj: T, name: string = undefined): HttpQue
     return res;
 }
 
-export function parseQueryParams<T>(params: any): object {
-    const res = {};
+export function parseQueryParams<T>(params: any): T {
+    const res: T = <any>{};
 
     for(const key in params) {
         const value = params[key];
