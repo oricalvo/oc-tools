@@ -52,7 +52,7 @@ export interface HttpQueryParams {
     [key: string]: string
 };
 
-export function stringifyQueryParams<T>(obj: T, name: string = undefined): HttpQueryParams {
+export function flattenQueryParams<T>(obj: T, name: string = undefined): HttpQueryParams {
     const res = {};
 
     for(const key in obj) {
@@ -64,7 +64,7 @@ export function stringifyQueryParams<T>(obj: T, name: string = undefined): HttpQ
             res[newKey] = value.toString();
         }
         else if(type == "object") {
-            const complex = stringifyQueryParams(value, newKey);
+            const complex = flattenQueryParams(value, newKey);
             Object.assign(res, complex);
         }
         else {
@@ -119,7 +119,13 @@ export function httpRequest<T>(options: HttpRequestOptions): Promise<T> {
         };
 
         if(options.method.toUpperCase() == "GET") {
-            rawOptions.qs = options.data;
+            if(options.data) {
+                if(typeof options.data != "object") {
+                    throw new Error("When sending GET request data must be of type object");
+                }
+            }
+
+            rawOptions.qs = flattenQueryParams(options.data);
         }
         else {
             rawOptions.json = options.data;
