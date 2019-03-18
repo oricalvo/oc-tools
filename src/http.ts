@@ -165,7 +165,12 @@ export function httpRequest<T>(options: HttpRequestOptions): Promise<T> {
                         return;
                     }
 
-                    resolve(JSON.parse(body));
+                    if(typeof body == "string") {
+                        resolve(JSON.parse(body));
+                        return;
+                    }
+
+                    resolve(body);
                 }
                 catch(err) {
                     reject(err);
