@@ -1,8 +1,4 @@
-export class HttpError extends Error {
-    constructor(message: string, public statusCode: number, public statusMessage?: string, public body?: any) {
-        super(message);
-    }
-}
+import {HttpError} from "./http";
 
 function onError(res, err) {
     console.error(err);
