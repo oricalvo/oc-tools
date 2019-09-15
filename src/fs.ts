@@ -38,17 +38,21 @@ export async function directoryExists(path) {
 }
 
 export async function fileExists(path): Promise<boolean> {
-    try {
-        const info = await stat(path);
-        return info.isFile();
-    }
-    catch(err) {
-        if(err.code == "ENOENT") {
-            return false;
-        }
+    return new Promise<boolean>((resolve, reject)=> {
+        fs.stat(path, function(err, info) {
+            if(err) {
+                if (err.code == "ENOENT") {
+                    resolve(false);
+                    return;
+                }
 
-        throw err;
-    }
+                reject(err);
+                return;
+            }
+
+            resolve(true);
+        });
+    });
 }
 
 export async function deleteDirectory(path): Promise<void> {
