@@ -171,6 +171,11 @@ export async function bootstrap(options: DelegateOptions) {
             throw new Error("Missing command to execute");
         }
 
+        const configure = build["configure"];
+        if (configure) {
+            await configure();
+        }
+
         const func = build[command];
         if (!func) {
             throw new Error("Exported function " + command + " was not found");
