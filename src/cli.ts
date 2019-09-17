@@ -171,9 +171,9 @@ export async function bootstrap(options: DelegateOptions) {
             throw new Error("Missing command to execute");
         }
 
-        const configure = build["configure"];
-        if (configure) {
-            await configure();
+        const pre = build["preExecute"];
+        if (pre) {
+            await pre();
         }
 
         const func = build[command];
@@ -181,7 +181,22 @@ export async function bootstrap(options: DelegateOptions) {
             throw new Error("Exported function " + command + " was not found");
         }
 
-        await func(parseArgs(process.argv.slice(3)));
+        try {
+            await func(parseArgs(process.argv.slice(3)));
+        }
+        finally {
+            const post = build["postExecute"];
+            if (post) {
+                try {
+                    await post();
+                }
+                catch(err) {
+                    //
+                    //  Ignore error
+                    //
+                }
+            }
+        }
     }
     catch(err) {
         console.error(err);
