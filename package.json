@@ -20,7 +20,7 @@
     "glob": "^7.1.1",
     "minimatch": "^3.0.4",
     "moment": "^2.22.2",
-    "open": "^0.0.5",
+    "open": "^7.0.0",
     "request": "^2.81.0",
     "string-argv": "^0.0.2",
     "winston": "^3.1.0"
