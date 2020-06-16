@@ -200,5 +200,7 @@ export async function bootstrap(options: DelegateOptions) {
     }
     catch(err) {
         console.error(err);
+
+        process.exit(1);
     }
 }
